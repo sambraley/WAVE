@@ -2,17 +2,23 @@ using UnityEngine;
 using System.Collections;
 
 public class wallmaster : MonoBehaviour {
-	tile[][] maze;
+	tile[,] maze;
 	Vector3 spawn;
 	int zones;
 
 	//init all
-	void start(){
-		maze = new tile[20][20];
+	void Start()
+    {
+        Debug.Log("calling render");
+        maze = new tile[20,20];
 		spawn = new Vector3(0,0,0);
+        for (int z = 0; z < maze.GetLength(0); z++)
+            for (int x = 0; x < maze.GetLength(0); x++)
+                maze[z, x] = new tile(new Vector3(x,0,z));
+        invisiblehand.render_maze(maze);
 	}
 
-	void update(){
+	void Update(){
 
 	}
 

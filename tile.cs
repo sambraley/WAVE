@@ -1,36 +1,60 @@
 using UnityEngine;
 using System.Collections;
 
-public class tile : MonoBehaviour {
+public class tile : MonoBehaviour
+{
 
-   enum types {grass, deadspace, normal};
-   enum status {touched, untouched, frontier};
-   enum wall {none, door, wall};
+    public enum types {grass, deadspace, normal};
+    public enum status {touched, untouched, frontier};
+    public enum wall {none, door, wall};
 
-   int northwall;
-   int westwall;
-   int southwall;
-   int eastwall;
+    int northwall;
+    int westwall;
+    int southwall;
+    int eastwall;
 
-   int type;
-   Vector3 pos;
-   int zone;
+    int type;
+    Vector3 pos;
+    int zone;
 
-   public tile(Vector3 position){
-      northwall = wall;
-      westwall = wall;
-      southwall = wall;
-      eastwall = wall;
-      type = types.normal;
+    public tile(Vector3 position)
+    {
       pos = position;
-   }
+      northwall = (int)wall.wall;
+      westwall = (int)wall.wall;
+      southwall = (int)wall.wall;
+      eastwall = (int)wall.wall;
+      type = (int)types.normal;
+    }
 
-   void Start () {
+    public int get_northwall()
+    {
+        return northwall;
+    }
 
-   }
+    public int get_westwall()
+    {
+        return westwall;
+    }
 
-   void Update () {
+    public int get_southwall()
+    {
+        return southwall;
+    }
+
+    public int get_eastwall()
+    {
+        return eastwall;
+    }
+
+    void Start ()
+    {
+
+    }
+
+    void Update ()
+    {
    
-   }
+    }
    
 }
