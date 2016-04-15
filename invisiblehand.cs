@@ -22,9 +22,9 @@ public class invisiblehand : MonoBehaviour
 
     public static void render_maze(tile[,] maze)
     {
-        GameObject wall = GameObject.Find("green_tan_wall");
+        GameObject wall = GameObject.Find("green_pink_wall");
         GameObject floor = GameObject.Find("black_white_checkered_floor");
-        GameObject post = GameObject.Find("wall_post");
+        GameObject post = GameObject.Find("white_wall_post");
         Debug.Log("begin render");
         for (int z = 0; z < maze.GetLength(0); z++)
         {
