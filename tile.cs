@@ -27,25 +27,14 @@ public class tile : MonoBehaviour
       type = (int)types.normal;
     }
 
-    public int get_northwall()
-    {
-        return northwall;
-    }
-
-    public int get_westwall()
-    {
-        return westwall;
-    }
-
-    public int get_southwall()
-    {
-        return southwall;
-    }
-
-    public int get_eastwall()
-    {
-        return eastwall;
-    }
+    public int get_northwall(){return northwall;}
+    public int get_westwall(){return westwall;}
+    public int get_southwall(){return southwall;}
+    public int get_eastwall(){return eastwall;}
+    public void set_northwall(int val){northwall = val;}
+    public void set_southwall(int val) { southwall = val; }
+    public void set_westwall(int val) { westwall = val; }
+    public void set_eastwall(int val) { eastwall = val; }
 
     void Start ()
     {
