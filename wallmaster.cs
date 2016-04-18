@@ -11,11 +11,11 @@ public class wallmaster : MonoBehaviour {
     {
         Debug.Log("calling render");
         maze = new tile[20,20];
-		spawn = new Vector3(0,0,0);
+		spawn = new Vector3(1,2,-1);
         for (int z = 0; z < maze.GetLength(0); z++)
             for (int x = 0; x < maze.GetLength(0); x++)
                 maze[z, x] = new tile(new Vector3(x,0,z));
-        invisiblehand.render_maze(maze);
+        invisiblehand.render_maze(maze, spawn);
 	}
 
 	void Update(){

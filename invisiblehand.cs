@@ -20,11 +20,12 @@ public class invisiblehand : MonoBehaviour
 
     }
 
-    public static void render_maze(tile[,] maze)
+    public static void render_maze(tile[,] maze, Vector3 spawn)
     {
-        GameObject wall = GameObject.Find("green_pink_wall");
-        GameObject floor = GameObject.Find("black_white_checkered_floor");
-        GameObject post = GameObject.Find("white_wall_post");
+        GameObject player = (GameObject)Instantiate((Resources.Load("player_character") as GameObject), spawn, Quaternion.identity);
+        GameObject wall = Resources.Load("green_pink_wall") as GameObject;
+        GameObject floor = Resources.Load("black_white_checkered_floor") as GameObject;
+        GameObject post = Resources.Load("white_wall_post") as GameObject;
         Debug.Log("begin render");
         for (int z = 0; z < maze.GetLength(0); z++)
         {
