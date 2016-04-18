@@ -3,38 +3,42 @@ using System.Collections;
 
 public class tile : MonoBehaviour
 {
+    public enum Type {grass, deadspace, normal};
+    public enum Status {none, maze, frontier};
+    public enum Wall {none, door, wall};
 
-    public enum types {grass, deadspace, normal};
-    public enum status {touched, untouched, frontier};
-    public enum wall {none, door, wall};
+    Wall northwall;
+    Wall westwall;
+    Wall southwall;
+    Wall eastwall;
 
-    int northwall;
-    int westwall;
-    int southwall;
-    int eastwall;
+    Status status;
 
-    int type;
-    Vector3 pos;
-    int zone;
+    Type type;
+    //Vector3 pos;
+    //int zone;
 
-    public tile(Vector3 position)
+    public tile()
     {
-      pos = position;
-      northwall = (int)wall.wall;
-      westwall = (int)wall.wall;
-      southwall = (int)wall.wall;
-      eastwall = (int)wall.wall;
-      type = (int)types.normal;
+        northwall = Wall.wall;
+        westwall = Wall.wall;
+        southwall = Wall.wall;
+        eastwall = Wall.wall;
+        type = Type.normal;
+        status = Status.none;
     }
 
-    public int get_northwall(){return northwall;}
-    public int get_westwall(){return westwall;}
-    public int get_southwall(){return southwall;}
-    public int get_eastwall(){return eastwall;}
-    public void set_northwall(int val){northwall = val;}
-    public void set_southwall(int val) { southwall = val; }
-    public void set_westwall(int val) { westwall = val; }
-    public void set_eastwall(int val) { eastwall = val; }
+    public Wall get_northwall(){return northwall;}
+    public Wall get_westwall(){return westwall;}
+    public Wall get_southwall(){return southwall;}
+    public Wall get_eastwall(){return eastwall;}
+    public void set_northwall(Wall val){northwall = val;}
+    public void set_southwall(Wall val) { southwall = val; }
+    public void set_westwall(Wall val) { westwall = val; }
+    public void set_eastwall(Wall val) { eastwall = val; }
+
+    public Status get_status() { return status; }
+    public void set_status(Status val) { status = val; }
 
     void Start ()
     {
