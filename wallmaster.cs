@@ -3,7 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public class wallmaster : MonoBehaviour {
+public class wallmaster : MonoBehaviour 
+{
 	tile[,] maze;
 	Vector3 spawn;
     int size;
@@ -39,9 +40,11 @@ public class wallmaster : MonoBehaviour {
         while (frontiers.Count > 0)
         {
             //pick frontier
-            current = frontiers[rand.Next(0, frontiers.Count)];
+			int chosen = rand.Next(0, frontiers.Count);
+            current = frontiers[chosen];
             
             //remove from the frontiers list
+			frontiers.RemoveAt(chosen);
 
             //make part of maze
             maze[(int)current.x, (int)current.y].set_status(tile.Status.maze);
@@ -54,6 +57,9 @@ public class wallmaster : MonoBehaviour {
                 neighbor = neighbors[rand.Next(0, neighbors.Count)];
                 //knock down wall
                 delete_wall(current, neighbor);
+
+				//Add current's frontiers to frontier list
+				make_frontiers(current, frontiers);
 
             }
             else
@@ -80,7 +86,8 @@ public class wallmaster : MonoBehaviour {
         if (current.y > -1 && current.y < size && current.x > -1 && current.x < size)
         {
             //TODO check if this is status.none
-            maze[(int)current.x, (int)current.y].set_status(tile.Status.frontier);
+			if(maze[(int)current.x, (int)current.y].get_status() == tile.Status.none)
+//            maze[(int)current.x, (int)current.y].set_status(tile.Status.frontier);
             frontiers.Add(current);
         }
     }
@@ -108,6 +115,31 @@ public class wallmaster : MonoBehaviour {
 
     void delete_wall(Vector2 a, Vector2 b)
     {
+		int ax = (int)a.x;
+		int ay = (int)a.y;
+		int bx = (int)b.x;
+		int by = (int)b.y;
+
+		if(ax < bx)
+		{
+			maze[ax, ay].set_eastwall(tile.Wall.none);
+			maze[bx, by].set_westwall(tile.Wall.none);
+		}
+		else if (ax > bx)
+		{
+			maze[ax, ay].set_westwall(tile.Wall.none);
+			maze[bx, by].set_eastwall(tile.Wall.none);
+		}
+		else if (ay < by)
+		{
+			maze[ax, ay].set_southwall(tile.Wall.none);
+			maze[bx, by].set_northwall(tile.Wall.none);
+		}
+		else if (ay > by)
+		{
+			maze[ax, ay].set_northwall(tile.Wall.none);
+			maze[bx, by].set_southwall(tile.Wall.none);
+		}
 
     }
 
