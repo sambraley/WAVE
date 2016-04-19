@@ -15,12 +15,13 @@ public class wallmaster : MonoBehaviour
 	void Start()
 	{
 		Debug.Log("calling render");
-		maze = new tile[20,20];
+		maze = new tile[10,10];
 		spawn = new Vector3(1,2,-1);
         size = maze.GetLength(0);
         for (int z = 0; z < size; z++)
 			for (int x = 0; x < size; x++)
 				maze[z, x] = new tile();
+        create_maze();
 		invisiblehand renderer = new invisiblehand();
 		renderer.render_maze(maze, spawn);
 	}
@@ -34,33 +35,35 @@ public class wallmaster : MonoBehaviour
         seed = Time.time.ToString();
         System.Random rand = new System.Random(seed.GetHashCode());
         Vector2 current = new Vector2(rand.Next(0,size),rand.Next(0,size));
-        Debug.Log("starting node is x: " + current.x + " y: " + current.y);
+        maze[(int)current.y, (int)current.x].set_status(tile.Status.maze);
+        Debug.Log("starting tile is x: " + current.x + " y: " + current.y);
         List<Vector2> frontiers = new List<Vector2>();
         make_frontiers(current,frontiers);
+        Debug.Log("entering while loop");
         while (frontiers.Count > 0)
         {
             //pick frontier
 			int chosen = rand.Next(0, frontiers.Count);
+            Debug.Log("Chosen int is: " + chosen);
             current = frontiers[chosen];
-            
+            Debug.Log("Current/frontier selected for this iteration is: (" + current.x + "," + current.y + ")");
             //remove from the frontiers list
 			frontiers.RemoveAt(chosen);
 
             //make part of maze
-            maze[(int)current.x, (int)current.y].set_status(tile.Status.maze);
+            maze[(int)current.y, (int)current.x].set_status(tile.Status.maze);
             //find neighbors
             List<Vector2> neighbors = find_neighbors(current);
             //pick a neighbor
-            Vector2 neighbor;
+            
             if (neighbors.Count > 0)
             {
+                Vector2 neighbor;   
                 neighbor = neighbors[rand.Next(0, neighbors.Count)];
                 //knock down wall
                 delete_wall(current, neighbor);
-
 				//Add current's frontiers to frontier list
 				make_frontiers(current, frontiers);
-
             }
             else
             {
@@ -71,6 +74,7 @@ public class wallmaster : MonoBehaviour
 
     void make_frontiers(Vector2 current, List<Vector2> frontiers)
     {
+        Debug.Log("making frontiers");
         //north
         add_frontier(new Vector2(current.x, current.y - 1), frontiers);
         //west
@@ -86,14 +90,18 @@ public class wallmaster : MonoBehaviour
         if (current.y > -1 && current.y < size && current.x > -1 && current.x < size)
         {
             //TODO check if this is status.none
-			if(maze[(int)current.x, (int)current.y].get_status() == tile.Status.none)
-//            maze[(int)current.x, (int)current.y].set_status(tile.Status.frontier);
-            frontiers.Add(current);
+            if (maze[(int)current.y, (int)current.x].get_status() == tile.Status.none)
+            {
+                maze[(int)current.y, (int)current.x].set_status(tile.Status.frontier); //this needs to be here because otherwise frontiers will get double added
+                frontiers.Add(current);
+                Debug.Log("adding frontier (" + current.x + "," + current.y + ")");
+            }
         }
     }
 
     List<Vector2> find_neighbors(Vector2 current)
     {
+        Debug.Log("finding neighbors");
         List<Vector2> neighbors = new List<Vector2>();
         //north
         check_neighbor(new Vector2(current.x, current.y - 1), neighbors);
@@ -108,9 +116,14 @@ public class wallmaster : MonoBehaviour
 
     void check_neighbor(Vector2 current, List<Vector2> neighbors)
     {
-        if (current.y > -1 && current.y < size && current.x > -1 && current.x < size) //is it in bounds?
-            if (maze[(int)current.x, (int)current.y].get_status() == tile.Status.maze) //is it a maze piece?
+        if (current.y > -1 && current.y < size && current.x > -1 && current.x < size)
+        { //is it in bounds?
+            if (maze[(int)current.y, (int)current.x].get_status() == tile.Status.maze)
+            { //is it a maze piece?
                 neighbors.Add(current); //then add it
+                Debug.Log("adding neighbor (" + current.x + "," + current.y + ")");
+            }
+        }
     }
 
     void delete_wall(Vector2 a, Vector2 b)
@@ -120,25 +133,29 @@ public class wallmaster : MonoBehaviour
 		int bx = (int)b.x;
 		int by = (int)b.y;
 
-		if(ax < bx)
+		if(ax < bx) //east wall
 		{
-			maze[ax, ay].set_eastwall(tile.Wall.none);
-			maze[bx, by].set_westwall(tile.Wall.none);
+            Debug.Log("Removing east wall");
+			maze[ay, ax].set_eastwall(tile.Wall.none);
+			maze[by, bx].set_westwall(tile.Wall.none);
 		}
-		else if (ax > bx)
+		else if (ax > bx) //west wall
 		{
-			maze[ax, ay].set_westwall(tile.Wall.none);
-			maze[bx, by].set_eastwall(tile.Wall.none);
+            Debug.Log("Removing west wall");
+            maze[ay, ax].set_westwall(tile.Wall.none);
+			maze[by, bx].set_eastwall(tile.Wall.none);
 		}
-		else if (ay < by)
+		else if (ay < by) //southwall
 		{
-			maze[ax, ay].set_southwall(tile.Wall.none);
-			maze[bx, by].set_northwall(tile.Wall.none);
+            Debug.Log("Removing south wall");
+            maze[ay, ax].set_southwall(tile.Wall.none);
+			maze[by, bx].set_northwall(tile.Wall.none);
 		}
-		else if (ay > by)
+		else if (ay > by) //north wall
 		{
-			maze[ax, ay].set_northwall(tile.Wall.none);
-			maze[bx, by].set_southwall(tile.Wall.none);
+            Debug.Log("Removing north wall");
+            maze[ay, ax].set_northwall(tile.Wall.none);
+			maze[by, bx].set_southwall(tile.Wall.none);
 		}
 
     }
