@@ -15,13 +15,15 @@ public class wallmaster : MonoBehaviour
 	void Start()
 	{
 		Debug.Log("calling render");
-		maze = new tile[5,5];
+		maze = new tile[10,10];
 		spawn = new Vector3(1,2,-1);
         size = maze.GetLength(0);
         for (int z = 0; z < size; z++)
 			for (int x = 0; x < size; x++)
 				maze[z, x] = new tile();
+
         create_maze();
+
 		invisiblehand renderer = new invisiblehand();
 		renderer.render_maze(maze, spawn);
 	}
@@ -180,7 +182,12 @@ public class wallmaster : MonoBehaviour
 	void check_access(){
 		
 	}
-	
+
+    void make_rooms()
+    {
+
+    }
+
     //makes a "room" AKA an open space surrounded on all sides by walls
     void make_room()
     {
