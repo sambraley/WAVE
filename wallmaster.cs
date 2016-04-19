@@ -30,33 +30,32 @@ public class wallmaster : MonoBehaviour
 		
 	}
 	
+    //main procedural generation loop 
     void create_maze()
     {
-        // seed = Time.time.ToString(); creates consistently the same result
+        // seed = Time.time.ToString(); creates consistently the same result b/c it's based on seconds since starting the game
         seed = DateTime.Now.ToString();
         System.Random rand = new System.Random(seed.GetHashCode());
         Vector2 current = new Vector2(rand.Next(0,size),rand.Next(0,size));
         maze[(int)current.y, (int)current.x].set_status(tile.Status.maze);
-        Debug.Log("starting tile is x: " + current.x + " y: " + current.y);
+        //Debug.Log("starting tile is x: " + current.x + " y: " + current.y);
         List<Vector2> frontiers = new List<Vector2>();
         make_frontiers(current,frontiers);
-        Debug.Log("entering while loop");
+        //Debug.Log("entering while loop");
         while (frontiers.Count > 0)
         {
             //pick frontier
 			int chosen = rand.Next(0, frontiers.Count);
-            Debug.Log("Chosen int is: " + chosen);
+            //Debug.Log("Chosen int is: " + chosen);
             current = frontiers[chosen];
-            Debug.Log("Current/frontier selected for this iteration is: (" + current.x + "," + current.y + ")");
+            //Debug.Log("Current/frontier selected for this iteration is: (" + current.x + "," + current.y + ")");
             //remove from the frontiers list
 			frontiers.RemoveAt(chosen);
-
             //make part of maze
             maze[(int)current.y, (int)current.x].set_status(tile.Status.maze);
             //find neighbors
             List<Vector2> neighbors = find_neighbors(current);
             //pick a neighbor
-            
             if (neighbors.Count > 0)
             {
                 Vector2 neighbor;   
@@ -67,15 +66,16 @@ public class wallmaster : MonoBehaviour
 				make_frontiers(current, frontiers);
             }
             else
-            {
-                Debug.Log("shits fucked yo");
+            { //should never happen
+                Debug.Log("shits fucked yo"); //the ultimate debug code
             }
         }
     }
 
+    //makes all cardinal tiles that are status none into status frontiers
     void make_frontiers(Vector2 current, List<Vector2> frontiers)
     {
-        Debug.Log("making frontiers");
+        //Debug.Log("making frontiers");
         //north
         add_frontier(new Vector2(current.x, current.y - 1), frontiers);
         //west
@@ -95,14 +95,15 @@ public class wallmaster : MonoBehaviour
             {
                 maze[(int)current.y, (int)current.x].set_status(tile.Status.frontier); //this needs to be here because otherwise frontiers will get double added
                 frontiers.Add(current);
-                Debug.Log("adding frontier (" + current.x + "," + current.y + ")");
+                //Debug.Log("adding frontier (" + current.x + "," + current.y + ")");
             }
         }
     }
 
+    //finds all neighbors AKA tiles cardinal to the current that are of status maze
     List<Vector2> find_neighbors(Vector2 current)
     {
-        Debug.Log("finding neighbors");
+        //Debug.Log("finding neighbors");
         List<Vector2> neighbors = new List<Vector2>();
         //north
         check_neighbor(new Vector2(current.x, current.y - 1), neighbors);
@@ -115,6 +116,7 @@ public class wallmaster : MonoBehaviour
         return neighbors;
     }
 
+   
     void check_neighbor(Vector2 current, List<Vector2> neighbors)
     {
         if (current.y > -1 && current.y < size && current.x > -1 && current.x < size)
@@ -122,11 +124,13 @@ public class wallmaster : MonoBehaviour
             if (maze[(int)current.y, (int)current.x].get_status() == tile.Status.maze)
             { //is it a maze piece?
                 neighbors.Add(current); //then add it
-                Debug.Log("adding neighbor (" + current.x + "," + current.y + ")");
+                //Debug.Log("adding neighbor (" + current.x + "," + current.y + ")");
             }
         }
     }
 
+    //removes the wall that separates the tile located at a and b
+    //TODO make this more general, like set_wall()
     void delete_wall(Vector2 a, Vector2 b)
     {
 		int ax = (int)a.x;
@@ -136,25 +140,25 @@ public class wallmaster : MonoBehaviour
 
 		if(ax < bx) //east wall
 		{
-            Debug.Log("Removing east wall");
+            //Debug.Log("Removing east wall");
 			maze[ay, ax].set_eastwall(tile.Wall.none);
 			maze[by, bx].set_westwall(tile.Wall.none);
 		}
 		else if (ax > bx) //west wall
 		{
-            Debug.Log("Removing west wall");
+            //Debug.Log("Removing west wall");
             maze[ay, ax].set_westwall(tile.Wall.none);
 			maze[by, bx].set_eastwall(tile.Wall.none);
 		}
 		else if (ay < by) //southwall
 		{
-            Debug.Log("Removing south wall");
+            //Debug.Log("Removing south wall");
             maze[ay, ax].set_southwall(tile.Wall.none);
 			maze[by, bx].set_northwall(tile.Wall.none);
 		}
 		else if (ay > by) //north wall
 		{
-            Debug.Log("Removing north wall");
+            //Debug.Log("Removing north wall");
             maze[ay, ax].set_northwall(tile.Wall.none);
 			maze[by, bx].set_southwall(tile.Wall.none);
 		}
@@ -177,4 +181,9 @@ public class wallmaster : MonoBehaviour
 		
 	}
 	
+    //makes a "room" AKA an open space surrounded on all sides by walls
+    void make_room()
+    {
+
+    }
 }
