@@ -38,40 +38,28 @@ public class invisiblehand : MonoBehaviour
 		Debug.Log("begin render");
 		for (int z = 0; z < maze.GetLength(0); z++)
 		{
-			for (int x = 0; x < maze.GetLength(0); x++)
+            //assuming max z == max x (maze is a square)
+            GameObject temp_north_wall = (GameObject)Instantiate(wall, new Vector3(offset + scale * z, wall_height, 0), Quaternion.identity);
+            temp_north_wall.transform.Rotate(new Vector3(-90, 0, 0));
+            //north west pole
+            GameObject temp_nw_post = (GameObject)Instantiate(post, new Vector3(scale * z, post_height, 0), Quaternion.identity);
+            temp_nw_post.transform.Rotate(new Vector3(-90, 0, 0));
+            //north east pole
+            GameObject temp_ne_post_1 = (GameObject)Instantiate(post, new Vector3(scale + scale * z, post_height, 0), Quaternion.identity);
+            temp_ne_post_1.transform.Rotate(new Vector3(-90, 0, 0));
+            GameObject temp_west_wall = (GameObject)Instantiate(wall, new Vector3(0, wall_height, -offset + -scale * z), Quaternion.identity);
+            temp_west_wall.transform.Rotate(new Vector3(-90, 90, 0));
+            //south west pole
+            GameObject temp_sw_post_1 = (GameObject)Instantiate(post, new Vector3(0, post_height, -scale + -scale * z), Quaternion.identity);
+            temp_sw_post_1.transform.Rotate(new Vector3(-90, 0, 0));
+
+            for (int x = 0; x < maze.GetLength(0); x++)
 			{
                 //Debug.Log("making tile at (" + x + "," + z + ")");
                 if (maze[z, x].get_status() == tile.Status.maze)
                 {
                     GameObject temp_floor = (GameObject)Instantiate(floor, new Vector3(offset + scale * x, 0, -offset + -scale * z), Quaternion.identity);
                     temp_floor.transform.Rotate(new Vector3(-90, 0, 0));
-                }
-				//north wall decision
-				if (maze[z, x].get_northwall() == tile.Wall.wall && z == 0)
-				{
-					GameObject temp_north_wall = (GameObject)Instantiate(wall, new Vector3(offset + scale * x, wall_height, -scale * z), Quaternion.identity);
-					temp_north_wall.transform.Rotate(new Vector3(-90, 0, 0));
-					//north west pole
-					GameObject temp_nw_post = (GameObject)Instantiate(post, new Vector3(scale * x, post_height, -scale * z), Quaternion.identity);
-					temp_nw_post.transform.Rotate(new Vector3(-90, 0, 0));
-					//north east pole
-					GameObject temp_ne_post = (GameObject)Instantiate(post, new Vector3(scale + scale * x, post_height, -scale * z), Quaternion.identity);
-					temp_ne_post.transform.Rotate(new Vector3(-90, 0, 0));
-				}
-				//west wall decision
-				if (maze[z, x].get_westwall() == tile.Wall.wall && x == 0)
-				{
-					GameObject temp_west_wall = (GameObject)Instantiate(wall, new Vector3(scale * x, wall_height, -offset + -scale * z), Quaternion.identity);
-					temp_west_wall.transform.Rotate(new Vector3(-90, 90, 0));
-					//south west pole
-					GameObject temp_sw_post = (GameObject)Instantiate(post, new Vector3(scale * x, post_height, -scale + -scale * z), Quaternion.identity);
-					temp_sw_post.transform.Rotate(new Vector3(-90, 0, 0));
-                    //north west pole
-                    if (maze[z, x].get_northwall() != tile.Wall.wall)
-                    {
-                        GameObject temp_nw_post = (GameObject)Instantiate(post, new Vector3(scale * x, post_height, -scale * z), Quaternion.identity);
-                        temp_nw_post.transform.Rotate(new Vector3(-90, 0, 0));
-                    }
                 }
 				//east wall decision
 				if (maze[z, x].get_eastwall() == tile.Wall.wall)
