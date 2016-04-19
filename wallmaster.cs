@@ -15,7 +15,7 @@ public class wallmaster : MonoBehaviour
 	void Start()
 	{
 		Debug.Log("calling render");
-		maze = new tile[10,10];
+		maze = new tile[5,5];
 		spawn = new Vector3(1,2,-1);
         size = maze.GetLength(0);
         for (int z = 0; z < size; z++)
@@ -32,7 +32,8 @@ public class wallmaster : MonoBehaviour
 	
     void create_maze()
     {
-        seed = Time.time.ToString();
+        // seed = Time.time.ToString(); creates consistently the same result
+        seed = DateTime.Now.ToString();
         System.Random rand = new System.Random(seed.GetHashCode());
         Vector2 current = new Vector2(rand.Next(0,size),rand.Next(0,size));
         maze[(int)current.y, (int)current.x].set_status(tile.Status.maze);
