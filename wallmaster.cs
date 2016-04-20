@@ -15,13 +15,16 @@ public class wallmaster : MonoBehaviour
 	void Start()
 	{
 		Debug.Log("calling render");
-		maze = new tile[5,5];
+		maze = new tile[20,20];
 		spawn = new Vector3(1,2,-1);
         size = maze.GetLength(0);
         for (int z = 0; z < size; z++)
 			for (int x = 0; x < size; x++)
 				maze[z, x] = new tile();
+
         create_maze();
+		make_rooms();
+
 		invisiblehand renderer = new invisiblehand();
 		renderer.render_maze(maze, spawn);
 	}
@@ -180,10 +183,121 @@ public class wallmaster : MonoBehaviour
 	void check_access(){
 		
 	}
+
+	void make_rooms()
+	{
+		bool x = make_room(0,0, 3, 3 );
+		Debug.Log(x);
+	}
 	
     //makes a "room" AKA an open space surrounded on all sides by walls
-    void make_room()
+	bool make_room(int px, int py, int rx, int ry)
     {
+		if(px + rx == size || py + ry == size)
+		{
+			return false;
+		}
+		//Go to that position
+		for(int y = py; y < ry; y++)
+		{
+			for(int x = px; x < rx; x++)
+			{
+				tile t = maze[y,x];
+				//set to room
+				t.set_status(tile.Status.maze);
+
+				//If x == 0 set west wall
+				if (x == px)
+				{
+
+					t.set_westwall(tile.Wall.wall);
+
+					if(!((x - 1) < 0))
+					{
+						maze[y, x-1].set_eastwall(tile.Wall.wall);
+					}
+				}
+				else
+				{
+					t.set_westwall(tile.Wall.none);
+
+					if(!((x - 1) < 0))
+					{
+						maze[y, x-1].set_eastwall(tile.Wall.none);
+					}
+				}
+				//if y == 0 set north wall
+				if (y == py)
+				{ 
+					t.set_northwall(tile.Wall.wall);
+					if(!((y - 1) < 0))
+					{
+						Debug.Log("Help2");
+						maze[y-1, x].set_southwall(tile.Wall.wall);
+					}
+				}
+				else
+				{
+					t.set_northwall(tile.Wall.none);
+					if(!((y - 1) < 0))
+					{
+						Debug.Log("Help2");
+						maze[y-1, x].set_southwall(tile.Wall.none);
+					}
+				}
+				//if x == size set east wall
+				if (x == rx - 1)
+				{
+					t.set_eastwall(tile.Wall.wall);
+					if(!((x + 1) == size))
+					{
+						Debug.Log(x+1);
+						maze[y, x + 1].set_westwall(tile.Wall.wall);
+					}
+				}
+				else
+				{
+					t.set_eastwall(tile.Wall.none);
+					if(!((x + 1) == size))
+					{
+						Debug.Log(x+1);
+						maze[y, x + 1].set_westwall(tile.Wall.none);
+					}	
+				}
+				//if y == size set south wall
+				if (y == ry - 1)
+				{
+					t.set_southwall(tile.Wall.wall);
+					if(!((y + 1) == size))
+					{
+						Debug.Log("Help4");
+						maze[y + 1, x].set_northwall(tile.Wall.wall);
+					}
+
+
+				}
+				else
+				{
+					t.set_southwall(tile.Wall.none);
+					if(!((y + 1) == size))
+					{
+						Debug.Log("Help4");
+						maze[y + 1, x].set_northwall(tile.Wall.none);
+					}	
+				}
+					
+			}
+		}
+
+		return true;
+		//for loop through the array 
+			//set every tile to room tile
+		//set every tile to have no walls (this would be an issue if it's an edge wall)
 
     }
+
+	void remove_room_walls(tile t)
+	{
+
+	}
 }

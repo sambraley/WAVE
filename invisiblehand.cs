@@ -16,7 +16,7 @@ public class invisiblehand : MonoBehaviour
 	// Use this for initialization
 	void Start()
 	{
-		
+
 	}
 	
 	// Update is called once per frame
@@ -24,17 +24,15 @@ public class invisiblehand : MonoBehaviour
 	{
 		
 	}
-	
-	public invisiblehand()
-	{
-		wall = Resources.Load("green_pink_wall") as GameObject;
-		floor = Resources.Load("black_white_checkered_floor") as GameObject;
-		post = Resources.Load("white_wall_post") as GameObject;
-	}
+
 	
 	public void render_maze(tile[,] maze, Vector3 spawn)
 	{
-		player = (GameObject)Instantiate((Resources.Load("player_character") as GameObject), spawn, Quaternion.identity);
+
+		wall = Resources.Load("green_pink_wall") as GameObject;
+		floor = Resources.Load("black_white_checkered_floor") as GameObject;
+		post = Resources.Load("white_wall_post") as GameObject;
+//		player = (GameObject)Instantiate((Resources.Load("player_character") as GameObject), spawn, Quaternion.identity);
 		Debug.Log("begin render");
 		for (int z = 0; z < maze.GetLength(0); z++)
 		{
