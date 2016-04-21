@@ -24,13 +24,16 @@ public class wallmaster : MonoBehaviour
 
 		create_maze();
 		make_rooms();
+		find_alcoves();
 
 		invisiblehand renderer = new invisiblehand();
 		renderer.render_maze(maze, spawn);
 	}
 
 	void Update() {
-
+		if(Input.GetKeyDown(KeyCode.F1)){
+			Application.LoadLevel(0);	
+		}
 	}
 
 	//main procedural generation loop
@@ -184,9 +187,82 @@ public class wallmaster : MonoBehaviour
 
 	}
 
+//	byte get_num_walls(tile t)
+//	{
+//		byte count = 0;
+//
+//		if(t.get_northwall() == tile.Wall.wall)
+//		{
+//			count++;	
+//		}
+//		else 
+//		{
+//			
+//		}
+//
+//		if(t.get_westwall() == tile.Wall.wall)
+//		{
+//			count++;
+//		}
+//		if(t.get_eastwall() == tile.Wall.wall)
+//		{
+//			count++;
+//		}
+//		if(t.get_southwall() == tile.Wall.wall)
+//		{
+//			count++;
+//		}
+//
+//		return count;
+//	}
+
+	//Currently this cannot handle the alcoves whose adjacent tile through the opening has 2 or less
+	//Also this currently identifies alcoves by setting their rendering to none, this was just for testing purposes
+	void find_alcoves()
+	{
+		for(int y = 0; y < size; y++)
+		{
+			for(int x = 0; x < size; x++)
+			{
+				tile t = maze[y, x];
+
+				byte count = 0;
+
+				if(t.get_northwall() == tile.Wall.wall)
+				{
+					count++;	
+				}
+				else 
+				{
+
+				}
+
+				if(t.get_westwall() == tile.Wall.wall)
+				{
+					count++;
+				}
+				if(t.get_eastwall() == tile.Wall.wall)
+				{
+					count++;
+				}
+				if(t.get_southwall() == tile.Wall.wall)
+				{
+					count++;
+				}
+
+				//It should max be 3.
+				if (count >= 3){
+					t.set_type(tile.Type.alcove);
+					t.set_status(tile.Status.none);
+				}
+			}
+				
+		}
+	}
+
 	void make_rooms()
 	{
-		bool x = make_room(0, 0, 3, 3 );
+		bool x = make_room(1, 0, 5, 5 );
 		Debug.Log(x);
 	}
 	
@@ -198,12 +274,11 @@ public class wallmaster : MonoBehaviour
 			return false;
 		}
 		//Go to that position
-		for (int y = py; y < ry; y++)
+		for (int y = py; y < py + ry; y++)
 		{
-			for (int x = px; x < rx; x++)
+			for (int x = px; x < px + rx; x++)
 			{
 				tile t = maze[y, x];
-				//set to room
 				t.set_status(tile.Status.maze);
 
 				//If x == 0 set west wall
@@ -232,7 +307,6 @@ public class wallmaster : MonoBehaviour
 					t.set_northwall(tile.Wall.wall);
 					if (!((y - 1) < 0))
 					{
-						Debug.Log("Help2");
 						maze[y - 1, x].set_southwall(tile.Wall.wall);
 					}
 				}
@@ -241,17 +315,15 @@ public class wallmaster : MonoBehaviour
 					t.set_northwall(tile.Wall.none);
 					if (!((y - 1) < 0))
 					{
-						Debug.Log("Help2");
 						maze[y - 1, x].set_southwall(tile.Wall.none);
 					}
 				}
 				//if x == size set east wall
-				if (x == rx - 1)
+				if (x == px + rx - 1)
 				{
 					t.set_eastwall(tile.Wall.wall);
 					if (!((x + 1) == size))
 					{
-						Debug.Log(x + 1);
 						maze[y, x + 1].set_westwall(tile.Wall.wall);
 					}
 				}
@@ -260,18 +332,19 @@ public class wallmaster : MonoBehaviour
 					t.set_eastwall(tile.Wall.none);
 					if (!((x + 1) == size))
 					{
-						Debug.Log(x + 1);
 						maze[y, x + 1].set_westwall(tile.Wall.none);
 					}
 				}
 				//if y == size set south wall
-				if (y == ry - 1)
+				if (y == py + ry - 1)
 				{
 					t.set_southwall(tile.Wall.wall);
+					Debug.Log("HELLO" + y);
+
 					if (!((y + 1) == size))
 					{
-						Debug.Log("Help4");
 						maze[y + 1, x].set_northwall(tile.Wall.wall);
+						Debug.Log("GOODBYE" + (y + 1));
 					}
 
 
@@ -281,7 +354,6 @@ public class wallmaster : MonoBehaviour
 					t.set_southwall(tile.Wall.none);
 					if (!((y + 1) == size))
 					{
-						Debug.Log("Help4");
 						maze[y + 1, x].set_northwall(tile.Wall.none);
 					}
 				}

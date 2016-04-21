@@ -3,7 +3,7 @@ using System.Collections;
 
 public class tile : MonoBehaviour
 {
-    public enum Type {grass, deadspace, normal};
+    public enum Type {grass, deadspace, normal, alcove};
     public enum Status {none, maze, frontier};
     public enum Wall {none, door, wall};
 
@@ -39,6 +39,9 @@ public class tile : MonoBehaviour
 
     public Status get_status() { return status; }
     public void set_status(Status val) { status = val; }
+
+	public Type get_type() { return type; }
+	public void set_type(Type val) { type = val; }
 
     void Start ()
     {
