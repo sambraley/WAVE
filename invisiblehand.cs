@@ -12,6 +12,7 @@ public class invisiblehand : MonoBehaviour
 	GameObject wall;
 	GameObject floor;
 	GameObject post;
+	GameObject grass;
 	
 	// Use this for initialization
 	void Start()
@@ -31,8 +32,9 @@ public class invisiblehand : MonoBehaviour
 
 		wall = Resources.Load("green_pink_wall") as GameObject;
 		floor = Resources.Load("black_white_checkered_floor") as GameObject;
+		grass = Resources.Load("temp_grass") as GameObject;
 		post = Resources.Load("white_wall_post") as GameObject;
-//		player = (GameObject)Instantiate((Resources.Load("player_character") as GameObject), spawn, Quaternion.identity);
+		player = (GameObject)Instantiate((Resources.Load("player_character") as GameObject), spawn, Quaternion.identity);
 		Debug.Log("begin render");
 		for (int z = 0; z < maze.GetLength(0); z++)
 		{
@@ -56,8 +58,16 @@ public class invisiblehand : MonoBehaviour
                 //Debug.Log("making tile at (" + x + "," + z + ")");
                 if (maze[z, x].get_status() == tile.Status.maze)
                 {
-                    GameObject temp_floor = (GameObject)Instantiate(floor, new Vector3(offset + scale * x, 0, -offset + -scale * z), Quaternion.identity);
-                    temp_floor.transform.Rotate(new Vector3(-90, 0, 0));
+					if(maze[z, x].get_type() == tile.Type.normal)
+					{
+						GameObject temp_floor = (GameObject)Instantiate(floor, new Vector3(offset + scale * x, 0, -offset + -scale * z), Quaternion.identity);
+						temp_floor.transform.Rotate(new Vector3(-90, 0, 0));
+					}
+					else if (maze[z, x].get_type() == tile.Type.alcove)
+					{
+						GameObject temp_floor = (GameObject)Instantiate(grass, new Vector3(offset + scale * x, 0, -offset + -scale * z), Quaternion.identity);
+						temp_floor.transform.Rotate(new Vector3(-90, 0, 0));
+					}
                 }
 				//east wall decision
 				if (maze[z, x].get_eastwall() == tile.Wall.wall)
