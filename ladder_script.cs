@@ -6,9 +6,6 @@ public class ladder_script : MonoBehaviour {
 
     // Use this for initialization
     void Start() {
-        playerObject = GameObject.Find("player_character");
-        if (playerObject != null)
-            Debug.Log("found player");
         if (GetComponent<Collider>().isTrigger)
         {
             Debug.Log("this is a trigger");
@@ -21,19 +18,19 @@ public class ladder_script : MonoBehaviour {
     
     void OnTriggerEnter(Collider col)
     {
-        if (col.gameObject == playerObject)
+        if (col.gameObject.name == "player_character(Clone)")
         {
         Debug.Log("detected collision");
-            playerObject.SendMessage("canClimb");//.GetComponent("player_ladder_script").canClimb();
+            col.gameObject.SendMessage("canClimb");//.GetComponent("player_ladder_script").canClimb();
         }
     }
 
     void OnTriggerExit(Collider col)
     {
-        if (col.gameObject == playerObject)
+        if (col.gameObject.name == "player_character(Clone)")
         {
         Debug.Log("detected collision exit");
-            playerObject.SendMessage("cantClimb");
+            col.gameObject.SendMessage("cantClimb");
         }
     }
 }
