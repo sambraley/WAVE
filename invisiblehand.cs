@@ -32,7 +32,7 @@ public class invisiblehand : MonoBehaviour
 
 		wall = Resources.Load("green_pink_wall") as GameObject;
 		floor = Resources.Load("black_white_checkered_floor") as GameObject;
-		grass = Resources.Load("temp_grass") as GameObject;
+		grass = Resources.Load("grass_tile") as GameObject;
 		post = Resources.Load("white_wall_post") as GameObject;
 		player = (GameObject)Instantiate((Resources.Load("player_character") as GameObject), spawn, Quaternion.identity);
 		Debug.Log("begin render");
