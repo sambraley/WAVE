@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class invisiblehand : MonoBehaviour
@@ -13,17 +14,20 @@ public class invisiblehand : MonoBehaviour
 	GameObject floor;
 	GameObject post;
 	GameObject grass;
+
 	
 	// Use this for initialization
 	void Start()
 	{
-
+		
 	}
 	
 	// Update is called once per frame
 	void Update()
 	{
-		
+		if(Input.GetKeyDown(KeyCode.F1)){
+			SceneManager.LoadScene("maze_generation");
+		}
 	}
 
 	

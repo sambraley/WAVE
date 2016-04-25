@@ -27,17 +27,16 @@ public class wallmaster : MonoBehaviour
 				maze[z, x] = new tile();
 
 		create_maze();
-//		make_rooms();
+		make_rooms();
 		find_alcoves();
+		find_zones();
 
 		invisiblehand renderer = new invisiblehand();
 		renderer.render_maze(maze, spawn);
 	}
 
 	void Update() {
-		if(Input.GetKeyDown(KeyCode.F1)){
-			Application.LoadLevel(0);	
-		}
+
 	}
 
 	//main procedural generation loop
@@ -176,13 +175,44 @@ public class wallmaster : MonoBehaviour
 	}
 
 	//finds all zones
-	//also counts total number of zones
-	void find_zones() {
+	//Zones have a static int in constructor that keeps count
+	void find_zones() 
+	{
+		for(int y = 0; y < size; y++)
+		{
+			for(int x = 0; x < size; x++)
+			{
+				tile t = maze[y, x];
+				if(t.get_zone() == 0)
+				{
+					Zone z = new Zone();
+					find_zone(y, x, z.get_id());
+				}
+			}
+		}
 
 	}
 
 	//find a singular zone; subfunction of zone
-	void find_zone() {
+	void find_zone(int y, int x, uint zid)
+	{
+		tile t = maze[y, x];
+
+		if(!t.get_touch())
+		{
+			t.set_zone(zid);
+			Debug.Log(t.get_zone());
+			t.touch(true);
+
+			if(t.get_northwall() == tile.Wall.none)
+				find_zone(y-1, x, zid);
+			if(t.get_westwall() == tile.Wall.none)
+				find_zone(y, x-1, zid);
+			if(t.get_eastwall() == tile.Wall.none)
+				find_zone(y, x+1, zid);
+			if(t.get_southwall() == tile.Wall.none)
+				find_zone(y+1, x, zid);
+		}
 
 	}
 
@@ -276,7 +306,7 @@ public class wallmaster : MonoBehaviour
 
 	void make_rooms()
 	{
-		bool x = make_room(0, 0, 5, 5 );
+		bool x = make_room(1, 1, 5, 5 );
 		Debug.Log(x);
 	}
 	
