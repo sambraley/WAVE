@@ -14,6 +14,7 @@ public class invisiblehand : MonoBehaviour
 	GameObject floor;
 	GameObject post;
 	GameObject grass;
+	GameObject enemy;
 
 	
 	// Use this for initialization
@@ -30,7 +31,7 @@ public class invisiblehand : MonoBehaviour
 		}
 	}
 
-	
+
 	public void render_maze(tile[,] maze, Vector3 spawn)
 	{
 
@@ -39,6 +40,8 @@ public class invisiblehand : MonoBehaviour
 		grass = Resources.Load("grass_tile") as GameObject;
 		post = Resources.Load("white_wall_post") as GameObject;
 		player = (GameObject)Instantiate((Resources.Load("player_character") as GameObject), spawn, Quaternion.identity);
+		enemy = (GameObject) Instantiate((Resources.Load("bust_column") as GameObject), new Vector3(20, 0, -20), Quaternion.identity);
+
 		Debug.Log("begin render");
 		for (int z = 0; z < maze.GetLength(0); z++)
 		{
@@ -62,7 +65,7 @@ public class invisiblehand : MonoBehaviour
                 //Debug.Log("making tile at (" + x + "," + z + ")");
                 if (maze[z, x].get_status() == tile.Status.maze)
                 {
-					if(maze[z, x].get_type() == tile.Type.normal)
+					if(maze[z, x].get_type() == tile.Type.normal /* && maze[z,x].get_zone() == 1 */)
 					{
 						GameObject temp_floor = (GameObject)Instantiate(floor, new Vector3(offset + scale * x, 0, -offset + -scale * z), Quaternion.identity);
 						temp_floor.transform.Rotate(new Vector3(-90, 0, 0));

@@ -27,7 +27,7 @@ public class wallmaster : MonoBehaviour
 				maze[z, x] = new tile();
 
 		create_maze();
-		make_rooms();
+//		make_rooms();
 		find_alcoves();
 		find_zones();
 
