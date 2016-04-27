@@ -14,7 +14,7 @@ public class grass_blades_camera : MonoBehaviour {
 	void Update () {
         if (m_Camera != null)
         {
-            transform.LookAt(transform.position - m_Camera.transform.rotation * Vector3.forward); //, m_Camera.transform.rotation * Vector3.up
+            transform.LookAt(new Vector3(m_Camera.transform.position.x, 0, m_Camera.transform.position.z)); 
             //removed up stuff so that the grass won't rotate in the x or z direction
         }
         else
