@@ -8,6 +8,8 @@ public class WanderingAI : MonoBehaviour
 	float obstacleRange = 1.5f;
 	private bool _alive;
 	[SerializeField]
+	private GameObject _fireballPrefab;
+	private GameObject _fireball;
 	private float _lineOfSightRadius;
 
 	void Start ()
@@ -41,6 +43,12 @@ public class WanderingAI : MonoBehaviour
 
 
 				if (hitObject.CompareTag("Player")) {
+					if (_fireball == null) {
+						_fireball = Instantiate (_fireballPrefab) as GameObject;
+						_fireball.transform.position = transform.TransformPoint (Vector3.forward * 1.7f);
+						_fireball.transform.rotation = transform.rotation;
+
+					}
 				} else if (hit.distance < obstacleRange) {
 					float rotationAngle = Random.Range (-110, 110);
 					transform.Rotate (0, rotationAngle, 0);

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class invisiblehand : MonoBehaviour
@@ -15,20 +16,23 @@ public class invisiblehand : MonoBehaviour
 	GameObject grass;
 
     public Material[] materials;
+	GameObject enemy;
 	
 	// Use this for initialization
 	void Start()
 	{
-
+		
 	}
 	
 	// Update is called once per frame
 	void Update()
 	{
-		
+		if(Input.GetKeyDown(KeyCode.F1)){
+			SceneManager.LoadScene("maze_generation");
+		}
 	}
 
-	
+
 	public void render_maze(tile[,] maze, Vector3 spawn)
 	{
 
@@ -38,6 +42,8 @@ public class invisiblehand : MonoBehaviour
 		post = Resources.Load("white_wall_post") as GameObject;
 		player = (GameObject)Instantiate((Resources.Load("player_character") as GameObject), spawn, Quaternion.identity);
         player.transform.LookAt(new Vector3(2, 2, -2));
+//		enemy = (GameObject) Instantiate((Resources.Load("bust_column") as GameObject), new Vector3(20, 0, -20), Quaternion.identity);
+
 		Debug.Log("begin render");
 		for (int z = 0; z < maze.GetLength(0); z++)
 		{
@@ -61,7 +67,7 @@ public class invisiblehand : MonoBehaviour
                 //Debug.Log("making tile at (" + x + "," + z + ")");
                 if (maze[z, x].get_status() == tile.Status.maze)
                 {
-					if(maze[z, x].get_type() == tile.Type.normal)
+					if(maze[z, x].get_type() == tile.Type.normal /* && maze[z,x].get_zone() == 1 */)
 					{
 						GameObject temp_floor = (GameObject)Instantiate(floor, new Vector3(offset + scale * x, 0, -offset + -scale * z), Quaternion.identity);
 						temp_floor.transform.Rotate(new Vector3(-90, 0, 0));
