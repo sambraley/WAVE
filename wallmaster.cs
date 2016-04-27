@@ -22,14 +22,15 @@ public class wallmaster : MonoBehaviour
 		maze = new tile[10, 10];
 		spawn = new Vector3(1, 2, -1);
 		size = maze.GetLength(0);
-		for (int z = 0; z < size; z++)
-			for (int x = 0; x < size; x++)
-				maze[z, x] = new tile();
+		for (uint z = 0; z < size; z++)
+			for (uint x = 0; x < size; x++)
+				maze[z, x] = new tile(z ,x);
 
 		create_maze();
-//		make_rooms();
+		make_rooms();
 		find_alcoves();
 		find_zones();
+		find_neighbor_tiles();
 
 		invisiblehand renderer = new invisiblehand();
 		renderer.render_maze(maze, spawn);
@@ -183,10 +184,10 @@ public class wallmaster : MonoBehaviour
 			for(int x = 0; x < size; x++)
 			{
 				tile t = maze[y, x];
-				if(t.get_zone() == 0)
+				if(t.get_zone() == null)
 				{
 					Zone z = new Zone();
-					find_zone(y, x, z.get_id());
+					find_zone(y, x, z);
 				}
 			}
 		}
@@ -194,27 +195,110 @@ public class wallmaster : MonoBehaviour
 	}
 
 	//find a singular zone; subfunction of zone
-	void find_zone(int y, int x, uint zid)
+	void find_zone(int y, int x, Zone z)
 	{
 		tile t = maze[y, x];
 
 		if(!t.get_touch())
 		{
-			t.set_zone(zid);
-			Debug.Log(t.get_zone());
+			t.set_zone(z);
+			Debug.Log(t.get_zone().get_id());
 			t.touch(true);
+			z.add_tile(t);
 
 			if(t.get_northwall() == tile.Wall.none)
-				find_zone(y-1, x, zid);
+				find_zone(y-1, x, z);
 			if(t.get_westwall() == tile.Wall.none)
-				find_zone(y, x-1, zid);
+				find_zone(y, x-1, z);
 			if(t.get_eastwall() == tile.Wall.none)
-				find_zone(y, x+1, zid);
+				find_zone(y, x+1, z);
 			if(t.get_southwall() == tile.Wall.none)
-				find_zone(y+1, x, zid);
+				find_zone(y+1, x, z);
 		}
 
 	}
+
+	void find_neighbor_tiles() 
+	{
+		for(int y = 0; y < size-1; y++)
+		{
+			for(int x = 0; x < size-1; x++)
+			{
+				tile t = maze[y, x];
+				tile east = maze[y, x+1];
+				tile south = maze[y+1, x];
+
+				Zone tzone = t.get_zone();
+				Zone eastzone = east.get_zone();
+				Zone southzone = south.get_zone();
+
+				if(tzone == null){
+					Debug.Log("tzone is null");
+				}
+
+				if(eastzone == null){
+					Debug.Log("east is null");
+				}
+
+				if(southzone == null){
+					Debug.Log("south is null");
+				}
+				if(tzone.get_id() != eastzone.get_id()) //Could probably just be get_zone();
+				{
+					List<TilePair> ltp = null;
+					if(tzone.neighbors.TryGetValue(eastzone, out ltp))
+					{
+						ltp.Add(new TilePair(t, east));
+						//assuming other zone has neighbor as well
+						List<TilePair> eltp = null;
+						eastzone.neighbors.TryGetValue(tzone, out eltp);
+						eltp.Add(new TilePair(east, t));
+					}
+					else 
+					{
+						Debug.Log("Did not have pair matching for " + tzone.get_id() + " " + eastzone.get_id() );
+						//Assuming the other zone does not have a list either
+						List<TilePair> l1 = new List<TilePair>();
+						List<TilePair> l2 = new List<TilePair>();
+
+						l1.Add(new TilePair(t, east));
+						l2.Add(new TilePair(east, t));
+						tzone.neighbors.Add(eastzone, l1);
+						eastzone.neighbors.Add(tzone, l2);
+
+					}
+				}
+
+
+				if(tzone.get_id() != southzone.get_id()) //Could probably just be get_zone();
+				{
+					List<TilePair> ltp = null;
+					if(tzone.neighbors.TryGetValue(southzone, out ltp))
+					{
+						ltp.Add(new TilePair(t, south));
+						//assuming other zone has neighbor as well
+						List<TilePair> sltp = null;
+						southzone.neighbors.TryGetValue(tzone, out sltp);
+						sltp.Add(new TilePair(south, t));
+					}
+					else 
+					{
+						Debug.Log("Did not have pair matching for " + tzone.get_id() + " " + southzone.get_id() );
+						//Assuming the other zone does not have a list either
+						List<TilePair> l1 = new List<TilePair>();
+						List<TilePair> l2 = new List<TilePair>();
+
+						l1.Add(new TilePair(t, south));
+						l2.Add(new TilePair(south, t));
+						tzone.neighbors.Add(southzone, l1);
+						southzone.neighbors.Add(tzone, l2);
+
+					}
+				}
+			}
+		}
+	}
+
 
 	//make sure all zones are connected through doors; place doors if not
 	void check_access() {
@@ -306,7 +390,7 @@ public class wallmaster : MonoBehaviour
 
 	void make_rooms()
 	{
-		bool x = make_room(1, 1, 5, 5 );
+		bool x = make_room(7, 7, 2, 2 );
 		Debug.Log(x);
 	}
 	

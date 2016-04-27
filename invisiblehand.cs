@@ -40,7 +40,7 @@ public class invisiblehand : MonoBehaviour
 		grass = Resources.Load("grass_tile") as GameObject;
 		post = Resources.Load("white_wall_post") as GameObject;
 		player = (GameObject)Instantiate((Resources.Load("player_character") as GameObject), spawn, Quaternion.identity);
-		enemy = (GameObject) Instantiate((Resources.Load("bust_column") as GameObject), new Vector3(20, 0, -20), Quaternion.identity);
+//		enemy = (GameObject) Instantiate((Resources.Load("bust_column") as GameObject), new Vector3(20, 0, -20), Quaternion.identity);
 
 		Debug.Log("begin render");
 		for (int z = 0; z < maze.GetLength(0); z++)

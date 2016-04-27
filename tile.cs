@@ -15,20 +15,23 @@ public class tile : MonoBehaviour
     Status status;
 
     Type type;
-    //Vector3 pos;
-    //int zone;
-	uint zone;
+   	
+	uint y;
+	uint x;
+	Zone zone;
 	bool touched;
 
-    public tile()
+	public tile(uint y, uint x)
     {
+		this.y = y;
+		this.x = x;
         northwall = Wall.wall;
         westwall = Wall.wall;
         southwall = Wall.wall;
         eastwall = Wall.wall;
         type = Type.normal;
         status = Status.none;
-		zone = 0;
+		zone = null;
     }
 
     public Wall get_northwall(){return northwall;}
@@ -46,8 +49,8 @@ public class tile : MonoBehaviour
 	public Type get_type() { return type; }
 	public void set_type(Type val) { type = val; }
 
-	public uint get_zone() { return zone; }
-	public void set_zone(uint z) { zone = z; }
+	public Zone get_zone() { return zone; }
+	public void set_zone(Zone z) { zone = z; }
 
 	public bool get_touch() { return touched; }
 	//I want this to be idempotent for now
