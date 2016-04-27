@@ -13,6 +13,8 @@ public class invisiblehand : MonoBehaviour
 	GameObject floor;
 	GameObject post;
 	GameObject grass;
+
+    public Material[] materials;
 	
 	// Use this for initialization
 	void Start()
@@ -35,6 +37,7 @@ public class invisiblehand : MonoBehaviour
 		grass = Resources.Load("grass_tile") as GameObject;
 		post = Resources.Load("white_wall_post") as GameObject;
 		player = (GameObject)Instantiate((Resources.Load("player_character") as GameObject), spawn, Quaternion.identity);
+        player.transform.LookAt(new Vector3(2, 2, -2));
 		Debug.Log("begin render");
 		for (int z = 0; z < maze.GetLength(0); z++)
 		{

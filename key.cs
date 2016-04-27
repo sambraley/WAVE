@@ -2,15 +2,30 @@
 using System.Collections;
 
 public class key : MonoBehaviour {
+    int number;
+
+    void Start()
+    {
+        number = 1;
+    }
+
     void OnTriggerEnter(Collider col)
     {
         if (col.gameObject.name == "player_character(Clone)")
         {
             Debug.Log("detected key collision");
-            col.gameObject.SendMessage("got_key", "orange"); //also plays collect sound
+            col.gameObject.SendMessage("got_key", number); //also plays collect sound
             //have to do this message because if we attempt to play the sound in here, 
             //it'll get cut off by the fact that the game object gets destroyed
             Destroy(gameObject); //remove this key now
         }
+    }
+    void change_color(Material mat)
+    {
+        GetComponent<Renderer>().material.CopyPropertiesFromMaterial(mat);
+    }
+    void set_number(int num) //for indentification
+    {
+        number = num;
     }
 }
