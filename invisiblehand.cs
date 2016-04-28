@@ -13,6 +13,7 @@ public class invisiblehand : MonoBehaviour
     static Dictionary<string, GameObject> resources;
 
     public Material[] materials;
+
 	GameObject enemy;
     GameObject player;
 	
@@ -126,6 +127,10 @@ public class invisiblehand : MonoBehaviour
                         {
                             thing.transform.Rotate(new Vector3(0, 270, 0));
                         }
+                    }
+                    else if (current.get_contains() == "key")
+                    {
+                        //current.SendMessage("change_color", materials[current.number]);
                     }
                 }
                 //east wall decision
