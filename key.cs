@@ -7,6 +7,8 @@ public class key : MonoBehaviour {
     void Start()
     {
         number = 1;
+        transform.Translate(new Vector3(0, 1, 0));
+        transform.Rotate(new Vector3(45,0,0));
     }
 
     void OnTriggerEnter(Collider col)

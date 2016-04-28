@@ -381,7 +381,7 @@ public class wallmaster : MonoBehaviour
 						continue;
 
 					t.set_type(tile.Type.alcove);
-
+                    //t.set_contains("hedge");
 				}					
 			}
 				
