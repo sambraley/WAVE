@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class inventory : MonoBehaviour {
-    public bool[] key_ring;
+    bool[] key_ring;
     public AudioClip collect_sound;
     AudioSource sound;
     GameObject door;

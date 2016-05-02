@@ -21,6 +21,8 @@ public class tile : MonoBehaviour
 	Zone zone;
 	bool touched;
 
+    string contains;
+
 	public tile(uint y, uint x)
     {
 		this.y = y;
@@ -32,6 +34,7 @@ public class tile : MonoBehaviour
         type = Type.normal;
         status = Status.none;
 		zone = null;
+        contains = null;
     }
 
     public Wall get_northwall(){return northwall;}
@@ -42,6 +45,8 @@ public class tile : MonoBehaviour
     public void set_southwall(Wall val) { southwall = val; }
     public void set_westwall(Wall val) { westwall = val; }
     public void set_eastwall(Wall val) { eastwall = val; }
+    public void set_contains(string val) { contains = val; }
+    public string get_contains() { return contains; }
 
     public Status get_status() { return status; }
     public void set_status(Status val) { status = val; }
