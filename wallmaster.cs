@@ -16,7 +16,7 @@ public class wallmaster : MonoBehaviour
 
 
 	//init all
-	void Start()
+	void Awake()
 	{
 		Debug.Log("calling render");
 		maze = new tile[10, 10];
@@ -38,6 +38,11 @@ public class wallmaster : MonoBehaviour
 
 	void Update() {
 
+	}
+
+	public tile[,] show_maze()
+	{
+		return maze;
 	}
 
 	//main procedural generation loop
@@ -232,22 +237,12 @@ public class wallmaster : MonoBehaviour
 				Zone eastzone = east.get_zone();
 				Zone southzone = south.get_zone();
 
-				if(tzone == null){
-					Debug.Log("tzone is null");
-				}
-
-				if(eastzone == null){
-					Debug.Log("east is null");
-				}
-
-				if(southzone == null){
-					Debug.Log("south is null");
-				}
 				if(tzone.get_id() != eastzone.get_id()) //Could probably just be get_zone();
 				{
 					List<TilePair> ltp = null;
 					if(tzone.neighbors.TryGetValue(eastzone, out ltp))
 					{
+						Debug.Log("Found");
 						ltp.Add(new TilePair(t, east));
 						//assuming other zone has neighbor as well
 						List<TilePair> eltp = null;
@@ -390,14 +385,14 @@ public class wallmaster : MonoBehaviour
 
 	void make_rooms()
 	{
-		bool x = make_room(7, 7, 2, 2 );
+		bool x = make_room(8, 8, 2, 2 );
 		Debug.Log(x);
 	}
 	
 	//makes a "room" AKA an open space surrounded on all sides by walls
 	bool make_room(int px, int py, int rx, int ry)
 	{
-		if (px + rx == size || py + ry == size)
+		if (px + rx == size + 1 || py + ry == size + 1)
 		{
 			return false;
 		}

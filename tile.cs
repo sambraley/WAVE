@@ -16,8 +16,8 @@ public class tile : MonoBehaviour
 
     Type type;
    	
-	uint y;
-	uint x;
+	public uint y;
+	public uint x;
 	Zone zone;
 	bool touched;
 
