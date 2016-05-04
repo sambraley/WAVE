@@ -8,7 +8,12 @@ public class wallmaster : MonoBehaviour
 
 	public enum Direction {north, west, east, south, none};
 
-	tile[,] maze;
+    public int mazeX;
+    public int mazeY;
+    public bool makeroom;
+
+
+    tile[,] maze;
 	Vector3 spawn;
 	int size;
 	int zones;
@@ -19,16 +24,20 @@ public class wallmaster : MonoBehaviour
 	void Start()
 	{
 		Debug.Log("calling render");
-		maze = new tile[10, 10];
+		maze = new tile[mazeY, mazeX];
 		spawn = new Vector3(1, 2, -1);
 		size = maze.GetLength(0);
 		for (uint z = 0; z < size; z++)
 			for (uint x = 0; x < size; x++)
 				maze[z, x] = new tile(z ,x);
 
-		create_maze();
-		make_rooms();
-		find_alcoves();
+        make_room(0, 0, 2, 2);
+        for (uint z = 0;z < 2;z++)
+            for (uint x = 0;x < 2;x++)
+                maze[z, x].set_status(tile.Status.maze);
+
+        create_maze();
+        find_alcoves();
 		find_zones();
 		find_neighbor_tiles();
 
@@ -46,7 +55,7 @@ public class wallmaster : MonoBehaviour
 		// seed = Time.time.ToString(); creates consistently the same result b/c it's based on seconds since starting the game
 		seed = DateTime.Now.ToString();
 		System.Random rand = new System.Random(seed.GetHashCode());
-		Vector2 current = new Vector2(rand.Next(0, size), rand.Next(0, size));
+		Vector2 current = new Vector2(rand.Next(2, size), rand.Next(2, size));
 		maze[(int)current.y, (int)current.x].set_status(tile.Status.maze);
 		//Debug.Log("starting tile is x: " + current.x + " y: " + current.y);
 		List<Vector2> frontiers = new List<Vector2>();
@@ -131,8 +140,8 @@ public class wallmaster : MonoBehaviour
 	{
 		if (current.y > -1 && current.y < size && current.x > -1 && current.x < size)
 		{	//is it in bounds?
-			if (maze[(int)current.y, (int)current.x].get_status() == tile.Status.maze)
-			{	//is it a maze piece?
+			if (maze[(int)current.y, (int)current.x].get_status() == tile.Status.maze && maze[(int)current.y, (int)current.x].get_zone() == null)
+			{	//is it a maze piece? does it not already have a designated zone?
 				neighbors.Add(current); //then add it
 				//Debug.Log("adding neighbor (" + current.x + "," + current.y + ")");
 			}
@@ -390,17 +399,13 @@ public class wallmaster : MonoBehaviour
 
 	void make_rooms()
 	{
-		bool x = make_room(7, 7, 2, 2 );
+		bool x = make_room(0, 0, 5, 5 );
 		Debug.Log(x);
 	}
 	
 	//makes a "room" AKA an open space surrounded on all sides by walls
 	bool make_room(int px, int py, int rx, int ry)
 	{
-		if (px + rx == size || py + ry == size)
-		{
-			return false;
-		}
 		//Go to that position
 		for (int y = py; y < py + ry; y++)
 		{
