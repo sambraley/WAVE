@@ -12,7 +12,7 @@ public class wallmaster : MonoBehaviour
     public int mazeY;
     public bool makeroom;
 
-
+    string[] alcove_objects;
     tile[,] maze;
 	Vector3 spawn;
 	int size;
@@ -46,6 +46,10 @@ public class wallmaster : MonoBehaviour
         maze[0, 2].set_westwall(tile.Wall.door);
         zones = 1;
         create_maze();
+        alcove_objects = new string[3];
+        alcove_objects[0] = "flamingo";
+        alcove_objects[1] = "hedge";
+        alcove_objects[2] = "butt_column";
         find_alcoves();
 		find_zones();
 		find_neighbor_tiles();
@@ -354,8 +358,9 @@ public class wallmaster : MonoBehaviour
 	void find_alcoves()
 	{
 		Direction d = Direction.none;
-
-		for(int y = 0; y < size; y++)
+        seed = DateTime.Now.ToString();
+        System.Random rand = new System.Random(seed.GetHashCode());
+        for (int y = 0; y < size; y++)
 		{
 			for(int x = 0; x < size; x++)
 			{
@@ -400,7 +405,7 @@ public class wallmaster : MonoBehaviour
 						continue;
 
 					t.set_type(tile.Type.alcove);
-                    //t.set_contains("hedge");
+                    t.set_contains(alcove_objects[rand.Next(0,3)]);
 				}					
 			}
 				
