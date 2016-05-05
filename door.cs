@@ -4,9 +4,13 @@ using System.Collections;
 public class door : MonoBehaviour {
     Animator door_animation;
     public int number;
+    public AudioClip door_sound;
+    AudioSource sound;    
+
     // Use this for initialization
     void Start () {
         door_animation = GetComponent<Animator>();
+        sound = gameObject.AddComponent<AudioSource>();
         number = 1;
     }
 	
@@ -54,5 +58,7 @@ public class door : MonoBehaviour {
                 collider.size = new Vector3(3.4f,0.2f,2);
             }
         }
+        sound.clip = door_sound;
+        sound.Play();
     }
 }

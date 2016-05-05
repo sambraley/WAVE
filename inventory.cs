@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class inventory : MonoBehaviour {
     bool[] key_ring;
     public AudioClip collect_sound;
+    public AudioClip door_sound;
     AudioSource sound;
     GameObject door;
 
@@ -45,6 +46,8 @@ public class inventory : MonoBehaviour {
             if (door)
             {
                 door.SendMessage("does_have_key");
+                sound.clip = door_sound;
+                sound.Play();
             }
             else
             {
