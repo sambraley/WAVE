@@ -16,7 +16,7 @@ public class wallmaster : MonoBehaviour
     tile[,] maze;
 	Vector3 spawn;
 	int size;
-	int zones;
+	uint zones;
 	string seed;
 
 
@@ -32,10 +32,19 @@ public class wallmaster : MonoBehaviour
 				maze[z, x] = new tile(z ,x);
 
         make_room(0, 0, 2, 2);
-        for (uint z = 0;z < 2;z++)
-            for (uint x = 0;x < 2;x++)
+        for (uint z = 0; z < 2; z++)
+        {
+            for (uint x = 0; x < 2; x++)
+            {
                 maze[z, x].set_status(tile.Status.maze);
-
+                maze[z, x].set_zone(new Zone(0));
+            }
+        }
+        maze[1, 0].set_contains("column_tower");
+        maze[1, 1].set_contains("key");
+        maze[0, 1].set_eastwall(tile.Wall.door);
+        maze[0, 2].set_westwall(tile.Wall.door);
+        zones = 1;
         create_maze();
         find_alcoves();
 		find_zones();
@@ -195,7 +204,8 @@ public class wallmaster : MonoBehaviour
 				tile t = maze[y, x];
 				if(t.get_zone() == null)
 				{
-					Zone z = new Zone();
+					Zone z = new Zone(zones);
+                    zones++;
 					find_zone(y, x, z);
 				}
 			}

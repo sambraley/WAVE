@@ -130,7 +130,7 @@ public class invisiblehand : MonoBehaviour
                     }
                     else if (current.get_contains() == "key")
                     {
-                        //current.SendMessage("change_color", materials[current.number]);
+                        thing.SendMessage("set_number", 1);
                     }
                 }
                 //east wall decision
@@ -147,7 +147,8 @@ public class invisiblehand : MonoBehaviour
                         GameObject temp_east_door_frame = (GameObject)Instantiate(resources["door_frame"], new Vector3(scale + scale * x, 0, -offset + -scale * z), Quaternion.identity);
                         temp_east_door_frame.transform.Rotate(new Vector3(-90, 0, 0));
                         GameObject temp_east_door = (GameObject)Instantiate(resources["door"], new Vector3(scale + scale * x, 0, -offset + -scale * z), Quaternion.identity);
-                        temp_east_door.transform.Rotate(new Vector3(0, 0, 0));
+                        temp_east_door.transform.Rotate(new Vector3(0, 180, 0));
+                        temp_east_door.SendMessage("set_number", 1);
                     }
                     if (current.get_northwall() != tile.Wall.wall) //north east pole
                     {
