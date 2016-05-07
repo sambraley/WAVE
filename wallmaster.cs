@@ -13,14 +13,16 @@ north,
 		west,
 		east,
 		south,
-		none}
+		none};
 
-	;
+	public int mazeX;
+	public int mazeY;
+	public bool makeroom;
 
 	tile[,] maze;
 	Vector3 spawn;
 	int size;
-	int zones;
+	uint zones;
 	List<Zone> global_zones;
 	string seed;
 	static uint zid = 0;
@@ -30,16 +32,33 @@ north,
 	void Awake ()
 	{
 		Debug.Log ("calling render");
-		maze = new tile[20, 20];
+		maze = new tile[mazeY, mazeX];
 		spawn = new Vector3 (1, 2, -1);
+
 		size = maze.GetLength (0);
 		for (uint z = 0; z < size; z++)
 			for (uint x = 0; x < size; x++)
 				maze [z, x] = new tile (z, x);
 
 		global_zones = new List<Zone>();
+		make_room(0, 0, 2, 2);
+		for (uint z = 0; z < 2; z++)
+		{
+			for (uint x = 0; x < 2; x++)
+			{
+				maze[z, x].set_status(tile.Status.maze);
+				maze[z, x].set_zone(new Zone(zid));
+			}
+		}
+
+		maze[1, 0].set_contains("column_tower");
+		maze[1, 1].set_contains("key");
+		maze[0, 1].set_eastwall(tile.Wall.door);
+		maze[0, 2].set_westwall(tile.Wall.door);
+		zid = 1;
+
 		create_maze ();
-		make_rooms ();
+//		make_rooms ();
 		find_alcoves ();
 		find_zones ();
 		find_neighbor_tiles ();
@@ -77,7 +96,9 @@ north,
 		// seed = Time.time.ToString(); creates consistently the same result b/c it's based on seconds since starting the game
 		seed = DateTime.Now.ToString ();
 		System.Random rand = new System.Random (seed.GetHashCode ());
-		Vector2 current = new Vector2 (rand.Next (0, size), rand.Next (0, size));
+//		Vector2 current = new Vector2 (rand.Next (0, size), rand.Next (0, size));
+		Vector2 current = new Vector2(rand.Next(2, size), rand.Next(2, size));
+
 		maze [(int)current.y, (int)current.x].set_status (tile.Status.maze);
 		//Debug.Log("starting tile is x: " + current.x + " y: " + current.y);
 		List<Vector2> frontiers = new List<Vector2> ();
@@ -155,7 +176,7 @@ north,
 	void check_neighbor (Vector2 current, List<Vector2> neighbors)
 	{
 		if (current.y > -1 && current.y < size && current.x > -1 && current.x < size) {	//is it in bounds?
-			if (maze [(int)current.y, (int)current.x].get_status () == tile.Status.maze) {	//is it a maze piece?
+			if (maze [(int)current.y, (int)current.x].get_status () == tile.Status.maze && maze[(int)current.y, (int)current.x].get_zone() == null) {	//is it a maze piece?
 				neighbors.Add (current); //then add it
 				//Debug.Log("adding neighbor (" + current.x + "," + current.y + ")");
 			}
@@ -199,8 +220,8 @@ north,
 			for (int x = 0; x < size; x++) {
 				tile t = maze [y, x];
 				if (t.get_zone () == null) {
-					zid++;
 					Zone z = new Zone (zid);
+					zid++;
 					global_zones.Add(z);
 					find_zone (y, x, z);
 				}

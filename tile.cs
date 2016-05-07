@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class tile
+public class tile 
 {
     public enum Type {grass, deadspace, normal, alcove};
     public enum Status {none, maze, frontier};
