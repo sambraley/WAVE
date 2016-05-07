@@ -27,7 +27,7 @@ public class invisiblehand : MonoBehaviour
 	void Update()
 	{
 		if(Input.GetKeyDown(KeyCode.F1)){
-			SceneManager.LoadScene("asset zone");
+			SceneManager.LoadScene("maze_generation");
 		}
 	}
 

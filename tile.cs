@@ -1,7 +1,8 @@
 using UnityEngine;
 using System.Collections;
 
-public class tile
+
+public class tile 
 {
     public enum Type {grass, deadspace, normal, alcove, special};
     public enum Status {none, maze, frontier};
@@ -16,8 +17,8 @@ public class tile
 
     Type type;
    	
-	uint y;
-	uint x;
+	public uint y;
+	public uint x;
 	Zone zone;
 	bool touched;
 
