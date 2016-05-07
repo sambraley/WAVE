@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 using System;
 
@@ -16,12 +17,16 @@ public class wallmaster : MonoBehaviour
     tile[,] maze;
 	Vector3 spawn;
 	int size;
-	uint zones;
-	string seed;
+	uint zid;
+    List<Zone> global_zones;
+    string seed;
 
+    Zone start_zone;
+    Zone end_zone;
+    uint distance_from_start;
 
 	//init all
-	void Start()
+	void Awake()
 	{
 		Debug.Log("calling render");
 		maze = new tile[mazeY, mazeX];
@@ -32,38 +37,71 @@ public class wallmaster : MonoBehaviour
 				maze[z, x] = new tile(z ,x);
 
         make_room(0, 0, 2, 2);
+        start_zone = new Zone(0);
+        end_zone = start_zone;
         for (uint z = 0; z < 2; z++)
         {
             for (uint x = 0; x < 2; x++)
             {
                 maze[z, x].set_status(tile.Status.maze);
-                maze[z, x].set_zone(new Zone(0));
+                maze[z, x].set_zone(start_zone);
             }
         }
-        maze[1, 0].set_contains("column_tower");
-        maze[1, 1].set_contains("key");
-        maze[0, 1].set_eastwall(tile.Wall.door);
-        maze[0, 2].set_westwall(tile.Wall.door);
-        zones = 1;
+        global_zones = new List<Zone>();
+        global_zones.Add(start_zone);
+        //maze[1, 0].set_contains("column_tower");
+        //maze[1, 1].set_contains("key");
+        //maze[0, 1].set_eastwall(tile.Wall.door);
+        //maze[0, 2].set_westwall(tile.Wall.door);
+        zid = 1;
         create_maze();
         alcove_objects = new string[3];
         alcove_objects[0] = "flamingo";
         alcove_objects[1] = "hedge";
         alcove_objects[2] = "butt_column";
+        
+        make_rooms();
         find_alcoves();
-		find_zones();
-		find_neighbor_tiles();
+        add_deadspace();
 
-		invisiblehand renderer = new invisiblehand();
+        find_zones();
+		find_neighbors_tiles();
+        get_neighbors();
+        
+        distance_from_start = 0;
+        find_end_zone(start_zone, 0);
+        Debug.Log("End zone is " + end_zone.get_id() + " and it's distance is " + end_zone.distance); 
+        key_king();
+
+        invisiblehand renderer = new invisiblehand();
 		renderer.render_maze(maze, spawn);
 	}
 
-	void Update() {
+    void Update() {
 
 	}
 
-	//main procedural generation loop
-	void create_maze()
+    public tile[,] show_maze ()
+    {
+        return maze;
+    }
+
+    void get_neighbors()
+    {
+        foreach (Zone z in global_zones)
+        {
+            z.neighbors = z.neighbors_tiles.Keys.ToArray();
+
+            for (int x = 0; x < z.neighbors.Length; x++)
+            {
+                Debug.Log("This Zone: " + z.get_id() + " Neighbors: " + z.neighbors[x].get_id());
+            }
+        }
+    }
+
+
+    //main procedural generation loop
+    void create_maze()
 	{
 		// seed = Time.time.ToString(); creates consistently the same result b/c it's based on seconds since starting the game
 		seed = DateTime.Now.ToString();
@@ -208,8 +246,9 @@ public class wallmaster : MonoBehaviour
 				tile t = maze[y, x];
 				if(t.get_zone() == null)
 				{
-					Zone z = new Zone(zones);
-                    zones++;
+					Zone z = new Zone(zid);
+                    zid++;
+                    global_zones.Add(z);
 					find_zone(y, x, z);
 				}
 			}
@@ -241,84 +280,91 @@ public class wallmaster : MonoBehaviour
 
 	}
 
-	void find_neighbor_tiles() 
+	void find_neighbors_tiles() 
 	{
 		for(int y = 0; y < size-1; y++)
 		{
 			for(int x = 0; x < size-1; x++)
 			{
 				tile t = maze[y, x];
-				tile east = maze[y, x+1];
-				tile south = maze[y+1, x];
+                tile east = null;
+                tile south = null;
 
-				Zone tzone = t.get_zone();
-				Zone eastzone = east.get_zone();
-				Zone southzone = south.get_zone();
+                Zone eastzone = null;
+                Zone southzone = null;
 
-				if(tzone == null){
-					Debug.Log("tzone is null");
-				}
+                if ((x + 1) != size)
+                {
+                    east = maze[y, x + 1];
+                    //					Debug.Log("gonna check east tile at (" + east.x + "," + east.y + ")");
+                    eastzone = east.get_zone();
+                }
 
-				if(eastzone == null){
-					Debug.Log("east is null");
-				}
+                if ((y + 1) != size)
+                {
+                    south = maze[y + 1, x];
+                    southzone = south.get_zone();
+                }
 
-				if(southzone == null){
-					Debug.Log("south is null");
-				}
-				if(tzone.get_id() != eastzone.get_id()) //Could probably just be get_zone();
-				{
-					List<TilePair> ltp = null;
-					if(tzone.neighbors.TryGetValue(eastzone, out ltp))
-					{
-						ltp.Add(new TilePair(t, east));
-						//assuming other zone has neighbor as well
-						List<TilePair> eltp = null;
-						eastzone.neighbors.TryGetValue(tzone, out eltp);
-						eltp.Add(new TilePair(east, t));
-					}
-					else 
-					{
-						Debug.Log("Did not have pair matching for " + tzone.get_id() + " " + eastzone.get_id() );
-						//Assuming the other zone does not have a list either
-						List<TilePair> l1 = new List<TilePair>();
-						List<TilePair> l2 = new List<TilePair>();
+                Zone tzone = t.get_zone();
 
-						l1.Add(new TilePair(t, east));
-						l2.Add(new TilePair(east, t));
-						tzone.neighbors.Add(eastzone, l1);
-						eastzone.neighbors.Add(tzone, l2);
+                //				Debug.Log(tzone.get_id()+ " " + eastzone.get_id());
+                if (east != null && tzone.get_id() != eastzone.get_id())
+                { //Could probably just be get_zone();
 
-					}
-				}
+                    List<TilePair> ltp = null;
+
+                    if (tzone.neighbors_tiles.TryGetValue(eastzone, out ltp))
+                    {
+                        Debug.Log("Found");
+                        ltp.Add(new TilePair(t, east));
+                        //assuming other zone has neighbor as well
+                        List<TilePair> eltp = null;
+                        eastzone.neighbors_tiles.TryGetValue(tzone, out eltp);
+                        eltp.Add(new TilePair(east, t));
+                    }
+                    else
+                    {
+                        Debug.Log("Did not have pair matching for " + tzone.get_id() + " " + eastzone.get_id());
+                        //Assuming the other zone does not have a list either
+                        List<TilePair> l1 = new List<TilePair>();
+                        List<TilePair> l2 = new List<TilePair>();
+
+                        l1.Add(new TilePair(t, east));
+                        l2.Add(new TilePair(east, t));
+                        tzone.neighbors_tiles.Add(eastzone, l1);
+                        eastzone.neighbors_tiles.Add(tzone, l2);
+
+                    }
+                }
 
 
-				if(tzone.get_id() != southzone.get_id()) //Could probably just be get_zone();
-				{
-					List<TilePair> ltp = null;
-					if(tzone.neighbors.TryGetValue(southzone, out ltp))
-					{
-						ltp.Add(new TilePair(t, south));
-						//assuming other zone has neighbor as well
-						List<TilePair> sltp = null;
-						southzone.neighbors.TryGetValue(tzone, out sltp);
-						sltp.Add(new TilePair(south, t));
-					}
-					else 
-					{
-						Debug.Log("Did not have pair matching for " + tzone.get_id() + " " + southzone.get_id() );
-						//Assuming the other zone does not have a list either
-						List<TilePair> l1 = new List<TilePair>();
-						List<TilePair> l2 = new List<TilePair>();
+                if (south != null && tzone.get_id() != southzone.get_id())
+                { //Could probably just be get_zone();
+                    List<TilePair> ltp = null;
+                    if (tzone.neighbors_tiles.TryGetValue(southzone, out ltp))
+                    {
+                        ltp.Add(new TilePair(t, south));
+                        //assuming other zone has neighbor as well
+                        List<TilePair> sltp = null;
+                        southzone.neighbors_tiles.TryGetValue(tzone, out sltp);
+                        sltp.Add(new TilePair(south, t));
+                    }
+                    else
+                    {
+                        Debug.Log("Did not have pair matching for " + tzone.get_id() + " " + southzone.get_id());
+                        //Assuming the other zone does not have a list either
+                        List<TilePair> l1 = new List<TilePair>();
+                        List<TilePair> l2 = new List<TilePair>();
 
-						l1.Add(new TilePair(t, south));
-						l2.Add(new TilePair(south, t));
-						tzone.neighbors.Add(southzone, l1);
-						southzone.neighbors.Add(tzone, l2);
+                        l1.Add(new TilePair(t, south));
+                        l2.Add(new TilePair(south, t));
+                        tzone.neighbors_tiles.Add(southzone, l1);
+                        southzone.neighbors_tiles.Add(tzone, l2);
 
-					}
-				}
-			}
+                    }
+                }
+            }
 		}
 	}
 
@@ -353,8 +399,6 @@ public class wallmaster : MonoBehaviour
 		return count;
 	}
 
-	//Currently this cannot handle the alcoves whose adjacent tile through the opening has 2 or less
-	//Also this currently identifies alcoves by setting their rendering to none, this was just for testing purposes
 	void find_alcoves()
 	{
 		Direction d = Direction.none;
@@ -395,16 +439,28 @@ public class wallmaster : MonoBehaviour
 				//It should max be 3.
 				if (count == 3)
 				{
-					if(d == Direction.north && get_num_walls(maze[y-1,x]) == 2) 
-						continue;
-					else if(d == Direction.west && get_num_walls(maze[y,x-1]) == 2)
-						continue;
-					else if(d == Direction.east && get_num_walls(maze[y,x+1]) == 2)
-						continue;
-					else if(d == Direction.south && get_num_walls(maze[y+1,x]) == 2)
-						continue;
+					if(d == Direction.north && get_num_walls(maze[y-1,x]) == 2)
+                    {
+                        t.set_type(tile.Type.special);
+                        continue;
+                    }
+                    else if(d == Direction.west && get_num_walls(maze[y,x-1]) == 2)
+                    {
+                        t.set_type(tile.Type.special);
+                        continue;
+                    }
+                    else if(d == Direction.east && get_num_walls(maze[y,x+1]) == 2)
+                    {
+                        t.set_type(tile.Type.special);
+                        continue;
+                    }
+                    else if(d == Direction.south && get_num_walls(maze[y+1,x]) == 2)
+                    {
+                        t.set_type(tile.Type.special);
+                        continue;
+                    }
 
-					t.set_type(tile.Type.alcove);
+                    t.set_type(tile.Type.alcove);
                     t.set_contains(alcove_objects[rand.Next(0,3)]);
 				}					
 			}
@@ -414,7 +470,7 @@ public class wallmaster : MonoBehaviour
 
 	void make_rooms()
 	{
-		bool x = make_room(0, 0, 5, 5 );
+		bool x = make_room(4, 4, 2, 2 );
 		Debug.Log(x);
 	}
 	
@@ -514,8 +570,27 @@ public class wallmaster : MonoBehaviour
 
 	}
 
-	void remove_room_walls(tile t)
-	{
+    private void find_end_zone(Zone z, uint distance)
+    {
+        Debug.Log("giving zone " + z.get_id() + " a distance of " + distance);
+        z.distance = distance;
+        if (distance > end_zone.distance)
+            end_zone = z;
+        distance++;
+        for (int i = 0; i < z.neighbors.GetLength(0);i++)
+        {
+            if(z.neighbors[i].distance > distance)
+                find_end_zone(z.neighbors[i], distance);
+        }   
+    }
 
+    private void key_king()
+    {
+        
+    }
+
+    void remove_room_walls(tile t)
+	{
+        
 	}
 }

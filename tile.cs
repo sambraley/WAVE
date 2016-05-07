@@ -1,9 +1,9 @@
 using UnityEngine;
 using System.Collections;
 
-public class tile : MonoBehaviour
+public class tile
 {
-    public enum Type {grass, deadspace, normal, alcove};
+    public enum Type {grass, deadspace, normal, alcove, special};
     public enum Status {none, maze, frontier};
     public enum Wall {none, door, wall};
 
@@ -22,6 +22,8 @@ public class tile : MonoBehaviour
 	bool touched;
 
     string contains;
+    int key;
+    int door;
 
 	public tile(uint y, uint x)
     {
@@ -35,6 +37,8 @@ public class tile : MonoBehaviour
         status = Status.none;
 		zone = null;
         contains = null;
+        door = -1;
+        key = -1;
     }
 
     public Wall get_northwall(){return northwall;}

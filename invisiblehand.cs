@@ -76,7 +76,7 @@ public class invisiblehand : MonoBehaviour
                 tile current = maze[z, x];
                 if (current.get_status() == tile.Status.maze)
                 {
-					if(current.get_type() == tile.Type.normal /* && maze[z,x].get_zone() == 1 */)
+					if(current.get_type() == tile.Type.normal || current.get_type() == tile.Type.special)
 					{
 						GameObject temp_floor = (GameObject)Instantiate(resources["floor"], new Vector3(offset + scale * x, 0, -offset + -scale * z), Quaternion.identity);
 						temp_floor.transform.Rotate(new Vector3(-90, 0, 0));
@@ -86,6 +86,11 @@ public class invisiblehand : MonoBehaviour
 						GameObject temp_floor = (GameObject)Instantiate(resources["grass"], new Vector3(offset + scale * x, 0, -offset + -scale * z), Quaternion.identity);
 						temp_floor.transform.Rotate(new Vector3(-90, 0, 0));
 					}
+                    //else if (current.get_type() == tile.Type.special)
+                    //{
+                    //    GameObject temp_floor = (GameObject)Instantiate(resources["floor"], new Vector3(offset + scale * x, 0, -offset + -scale * z), Quaternion.identity);
+                    //    temp_floor.transform.Rotate(new Vector3(-90, 0, 0));
+                    //}
                 }
                 //check to see if we need to place something
                 if (current.get_contains() != null)
