@@ -16,14 +16,14 @@ public class tile
 
     Type type;
    	
-	uint y;
-	uint x;
+	public uint y;
+	public uint x;
 	Zone zone;
 	bool touched;
 
     string contains;
-    int key;
-    int door;
+    public int key;
+    public int door;
 
 	public tile(uint y, uint x)
     {

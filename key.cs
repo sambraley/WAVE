@@ -16,7 +16,7 @@ public class key : MonoBehaviour {
         if (col.gameObject.name == "player_character(Clone)")
         {
             Debug.Log("detected key collision");
-            col.gameObject.SendMessage("got_key", number); //also plays collect sound
+            col.gameObject.SendMessage("got_key"); //also plays collect sound
             //have to do this message because if we attempt to play the sound in here, 
             //it'll get cut off by the fact that the game object gets destroyed
             Destroy(gameObject); //remove this key now

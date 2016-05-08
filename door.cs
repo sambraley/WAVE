@@ -19,7 +19,7 @@ public class door : MonoBehaviour {
         if (col.gameObject.name == "player_character(Clone)")
         {
             col.gameObject.SendMessage("at_door", gameObject);
-            col.gameObject.SendMessage("has_key", number);
+            col.gameObject.SendMessage("has_key");
         }
     }
 

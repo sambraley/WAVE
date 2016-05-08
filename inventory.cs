@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class inventory : MonoBehaviour {
-    bool[] key_ring;
+    int key_ring;
     public AudioClip collect_sound;
     public AudioClip door_sound;
     AudioSource sound;
@@ -11,7 +11,7 @@ public class inventory : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        key_ring = new bool[10];
+		key_ring = 100;
         sound = gameObject.AddComponent<AudioSource>(); //have to add this for overlapping sounds
     }
 	
@@ -21,10 +21,9 @@ public class inventory : MonoBehaviour {
 	}
 
     //add to the keys list
-    void got_key(int key)
+    void got_key()
     {
-        Debug.Log("adding key #" + key + " to inventory");
-        key_ring[key] = true;
+		key_ring++;
         sound.clip = collect_sound;
         sound.Play();
     }
@@ -39,15 +38,16 @@ public class inventory : MonoBehaviour {
         door = null;
     }
 
-    void has_key(int key)
+    void has_key()
     {
-        if (key_ring[key])
+		if (key_ring != 0)
         {
             if (door)
             {
                 door.SendMessage("does_have_key");
                 sound.clip = door_sound;
                 sound.Play();
+				key_ring--;
             }
             else
             {

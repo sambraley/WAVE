@@ -27,7 +27,7 @@ public class invisiblehand : MonoBehaviour
 	void Update()
 	{
 		if(Input.GetKeyDown(KeyCode.F1)){
-			SceneManager.LoadScene("asset zone");
+			SceneManager.LoadScene("maze_generation");
 		}
 	}
 
@@ -47,6 +47,7 @@ public class invisiblehand : MonoBehaviour
         resources["door_frame"] = (Resources.Load("door_frame") as GameObject);
         resources["grass_blade"] = (Resources.Load("grass_blade") as GameObject);
         resources["butt_column"] = (Resources.Load("butt_column") as GameObject);
+		resources["speaker_tower"] = (Resources.Load("speaker_tower") as GameObject);
 
         player = (GameObject)Instantiate((Resources.Load("player_character") as GameObject), spawn, Quaternion.identity);
         player.transform.LookAt(new Vector3(2, 2, -2));
@@ -152,8 +153,15 @@ public class invisiblehand : MonoBehaviour
                         GameObject temp_east_door_frame = (GameObject)Instantiate(resources["door_frame"], new Vector3(scale + scale * x, 0, -offset + -scale * z), Quaternion.identity);
                         temp_east_door_frame.transform.Rotate(new Vector3(-90, 0, 0));
                         GameObject temp_east_door = (GameObject)Instantiate(resources["door"], new Vector3(scale + scale * x, 0, -offset + -scale * z), Quaternion.identity);
-                        temp_east_door.transform.Rotate(new Vector3(0, 180, 0));
-                        temp_east_door.SendMessage("set_number", 1);
+						if(current.door != -1)
+						{
+							temp_east_door.transform.Rotate(new Vector3(0, 180, 0));
+						}
+						else 
+						{
+							
+							temp_east_door.transform.Rotate(new Vector3(0, -180, 0));
+						}
                     }
                     if (current.get_northwall() != tile.Wall.wall) //north east pole
                     {
